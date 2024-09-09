@@ -16,6 +16,7 @@ pygame.display.set_caption("Number Puzzle")
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GRAY = (107,130,114)
+BORDER_GRAY = (169, 169, 169, 25)
 BUTTON_COLOR = (218, 181, 227)
 BUTTON_HOVER_COLOR = BLACK
 
@@ -40,13 +41,16 @@ def draw_grid(grid):
     for i in range(GRID_SIZE):
         for j in range(GRID_SIZE):
             val = grid[i][j]
+            rect = pygame.Rect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE)
             if val != 0:
-                pygame.draw.rect(screen, GRAY, (j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE))
+                pygame.draw.rect(screen, GRAY, rect)
                 text = font.render(str(val), True, WHITE)
                 text_rect = text.get_rect(center=(j * TILE_SIZE + TILE_SIZE // 2, i * TILE_SIZE + TILE_SIZE // 2))
                 screen.blit(text, text_rect)
             else:
                 pygame.draw.rect(screen, BLACK, (j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE))
+            
+            pygame.draw.rect(screen, BORDER_GRAY, rect, 1)
 
 # Move the tile
 def move_tile(grid, direction):
@@ -110,11 +114,9 @@ def main():
                     dragging = True
                     previous_x, previous_y = event.pos
                     moved = False
-                # print(f"Drag started at: {previous_x}, {previous_y}")
             elif event.type == pygame.MOUSEBUTTONUP:
                 dragging = False
                 moved = False
-                # print(f"Drag ended at: {event.pos[0]}, {event.pos[1]}")
             elif event.type == pygame.MOUSEMOTION:
                 if dragging:
                     x, y = event.pos
@@ -129,8 +131,6 @@ def main():
                             elif y > previous_y:  
                                 move_tile(grid, 'down')
                             moved = True
-                        
-                        # print(f"Dragging at: {x}, {y}")  # Print the current position
                         previous_x, previous_y = x, y  # Update previous coordinates
                     else:
                         previous_x, previous_y = x, y
